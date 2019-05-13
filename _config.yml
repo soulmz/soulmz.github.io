@@ -1,11 +1,9 @@
 # Site settings
 title:  Soulzz
-SEOTitle: 学习笔记
+SEOTitle: Soulzz的博客 | Soulzz 个人博客 | Docker | Kubernetes | Java
 header-img: img/无名/734608.png
-# header-img: img/post-bg-2015.jpg
-background:
 email: souldeathr@gmail.com
-description: "java go docker kubernetes"
+description: "Java Go Docker Kubernetes"
 keyword: "Soulzz 博客, 个人博客, 互联网"
 url: ""              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
@@ -14,7 +12,7 @@ baseurl: ""                             # for example, '/blog' if your blog host
 future: true
 
 # SNS settings
-RSS: false
+RSS: true
 #weibo_username:     
 #zhihu_username:     
 #github_username:    
@@ -33,15 +31,14 @@ exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","READM
 anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
 # If you have timezone issue (e.g. #68) in China, uncomment to use this:
 #timezone: CN  
-
-
+markdown_ext: "markdown,mkdown,mkdn,mkd,md"
+encoding:     "utf-8"
 
 # Gems
 # from PR#40, to support local preview for Jekyll 3.0
 # make sure you have this gem installed
 # `$ gem install jekyll-paginate`
-plugins: [jekyll-paginate]
-
+plugins: [jekyll-paginate,jekyll-feed]
 
 
 # Markdown settings
@@ -61,7 +58,7 @@ kramdown:
 
 
 # Disqus settings
-disqus_username: 
+disqus_username: Soulzz
 
 # Netease settings
 netease_comment: false
@@ -73,20 +70,20 @@ netease_comment: false
 # ba_track_id: [your track id]
 
 # Google Analytics
-ga_track_id: ''            # Format: UA-xxxxxx-xx
-ga_domain: 
+ga_track_id: 'UA-140050555-1'            # Format: UA-xxxxxx-xx
+ga_domain: auto
 
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: ""
-# sidebar-avatar: /img/head.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-about-description: "后端、Docker、Kubernetes"
+sidebar-avatar: /img/10662992.gif      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
 # Featured Tags
 featured-tags: true                     # whether or not using Feature-Tags
-featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
+featured-condition-size: 1              # 相同标签数量大于这个数，才会出现在首页
 
 
 
@@ -106,5 +103,5 @@ friends: [
     #{
     #     title: "Su",
     #     href: "http://su.gallery/"
-    # },{
+    # }
 ]
