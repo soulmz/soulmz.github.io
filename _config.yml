@@ -5,7 +5,7 @@ header-img: img/无名/734608.png
 email: souldeathr@gmail.com
 description: "Java Go Docker Kubernetes"
 keyword: "Soulzz 博客, 个人博客, 互联网"
-url: "https://zhangmz0223.github.io"              # your host, for absolute URL
+url: ""              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
@@ -56,31 +56,9 @@ kramdown:
       start_line: 1
 
 
-# ---------------- #
-#      Comments    #
-# ---------------- #
-# support provider: disqus, gitment, gitalk
-comments_provider: disqus
-# !!!重要!!! 请修改下面这些信息为你自己申请的
-# !!!Important!!! Please modify infos below to yours
-# https://disqus.com
-disqus:
-    username: dis_soulzz
-# https://imsun.net/posts/gitment-introduction/
-#gitment:
-#    owner: ityouknow
-#    repo: blog-comments
-#    oauth:
-#        client_id: 61bfc53d957e74e78f8f
-#        client_secret: 31c61e66cdcc9ada8db2267ee779d0bdafac434c
-# https://github.com/gitalk/gitalk#install
-#gitalk:
-#    owner: ityouknow
-#    repo: blog-comments
-#    clientID: 61bfc53d957e74e78f8f
-#    clientSecret: 31c61e66cdcc9ada8db2267ee779d0bdafac434c
-# 在使用其它评论组件时可点击显示 Disqus
-lazy_load_disqus : true
+
+# Disqus settings
+disqus_username: dis_soulzz
 
 # Netease settings
 netease_comment: false
@@ -99,7 +77,7 @@ ga_domain: auto
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "后端、Docker、Kubernetes"
-sidebar-avatar: /img/10662992.gif      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/无名/1004038.png      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
