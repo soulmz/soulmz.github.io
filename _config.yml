@@ -62,7 +62,7 @@ kramdown:
 
 gitalk:
     owner: soulmz
-    repo: https://soulmz.github.io
+    repo: blog-comment
     clientID: 03e3766fef3263458d0a
     clientSecret: 741109b224a744733fd20a205c50cea47a8e08dc
     admin: soulmz
