@@ -58,8 +58,8 @@ kramdown:
 
 
 # Disqus settings
-disqus_username: dis_soulzz
-disqus_url: https://zhangmz0223.github.io
+disqus:
+    username: dis_soulzz
 # Netease settings
 netease_comment: false
 
