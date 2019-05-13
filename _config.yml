@@ -1,11 +1,11 @@
 # Site settings
-title:  Soulzz
-SEOTitle: Soulzz的博客 | Soulzz 个人博客 | Docker | Kubernetes | Java
+title:  Soulmz
+SEOTitle: Soulmz的博客 | Soulmz 个人博客 | Docker | Kubernetes | Java
 header-img: img/无名/734608.png
 email: souldeathr@gmail.com
 description: "Java Go Docker Kubernetes"
-keyword: "Soulzz 博客, 个人博客, 互联网"
-url: ""              # your host, for absolute URL
+keyword: "Soulmz 博客, 个人博客, 互联网"
+url: "soulmz.github.io"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
@@ -58,7 +58,14 @@ kramdown:
 
 
 # Disqus settings
-disqus_username: dis_soulzz
+# disqus_username: dis_soulmz
+
+gitalk:
+    owner: soulmz
+    repo: blog-comment
+    clientID: 03e3766fef3263458d0a
+    clientSecret: 741109b224a744733fd20a205c50cea47a8e08dc
+    admin: soulmz
 
 # Netease settings
 netease_comment: false
@@ -70,8 +77,8 @@ netease_comment: false
 # ba_track_id: [your track id]
 
 # Google Analytics
-ga_track_id: 'UA-140050555-1'            # Format: UA-xxxxxx-xx
-ga_domain: auto
+ga_track_id: 'UA-140059859-1'            # Format: UA-xxxxxx-xx
+ga_domain: "soulmz.github.io"
 
 
 # Sidebar settings
