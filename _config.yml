@@ -5,7 +5,7 @@ header-img: img/无名/734608.png
 email: souldeathr@gmail.com
 description: "Java Go Docker Kubernetes"
 keyword: "Soulzz 博客, 个人博客, 互联网"
-url: ""              # your host, for absolute URL
+url: "https://zhangmz0223.github.io"              # your host, for absolute URL
 baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
 # Publish posts or collection documents with a future date.
