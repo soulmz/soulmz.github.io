@@ -29,7 +29,7 @@ macOS 10.14.4为终端中的搜索人页面索引添加新的默认快捷方式�
 
 ![masos](https://intellij-support.jetbrains.com/hc/article_attachments/360002207660/Screenshot_2019-05-08_at_11.21.08.png)
 
-## 解决方式: 
+## 解决方式:
 
 禁用掉 `Search man Page Index in Terminal` 或者 换个快捷键。
 
