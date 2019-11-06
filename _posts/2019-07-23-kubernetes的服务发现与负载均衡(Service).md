@@ -4,7 +4,7 @@ title:      kubernetes service 服务发现
 subtitle:   kubernetes 服务发现
 date:       2019-07-23 				
 author:     soulmz 					
-header-img: img/post-bg-2015.jpg 	
+header-img: img/backgroup/77659787_p0.jpg
 catalog: true 						
 tags:								
     - kubernetes
