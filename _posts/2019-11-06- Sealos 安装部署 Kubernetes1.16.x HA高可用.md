@@ -7,7 +7,8 @@ author:     soulmz
 header-img: img/backgroup/77642582_p0.jpg	
 catalog: true 						
 tags:								
-    - kubernetes Sealos
+    - kubernetes 
+    - sealos
 ---
 
 
