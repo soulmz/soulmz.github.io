@@ -4,7 +4,7 @@ title:      kubernetes v1.16.x 部署 - by sealos
 subtitle:   kubernetes sealos lvs负载均衡 
 date:       2019-11-06				
 author:     soulmz 					
-header-img: img/post-bg-2015.jpg 	
+header-img: img/backgroup/77642582_p0.jpg	
 catalog: true 						
 tags:								
     - kubernetes
