@@ -113,11 +113,21 @@ source ~/.zshrc
 
 ![image-20200316184810273](/img/image-20200316184810273.png)
 
-尝试 部署demo (demo 配置是提供学习使用的，官方推荐 生产 使用default 默认模式)
+### Istio CNI Plugin
 
-```bash
-istioctl manifest apply --set profile=demo
-```
+当前实现将用户 pod 流量转发到 proxy 的默认方式是使用 privileged 权限的 `istio-init` 这个 init container 来做的（运行脚本写入 iptables），需要用到 `NET_ADMIN` capabilities。对 linux capabilities 不了解的同学可以参考我的 [Linux capabilities 系列](http://mp.weixin.qq.com/s?__biz=MzU1MzY4NzQ1OA==&mid=2247484610&idx=1&sn=0f75f48b1651f03163bef421280c25f8&chksm=fbee440fcc99cd19c786acd3de00fee7914664171395013bb3fb4e1dfb1a84f618fc1a9b042e&scene=21#wechat_redirect)。
+
+Istio CNI 插件的主要设计目标是消除这个 privileged 权限的 init container，换成利用 Kubernetes CNI 机制来实现相同功能的替代方案。具体的原理就是在 Kubernetes CNI 插件链末尾加上 Istio 的处理逻辑，在创建和销毁 pod 的这些 hook 点来针对 istio 的 pod 做网络配置：写入 iptables，让该 pod 所在的 network namespace 的网络流量转发到 proxy 进程。
+
+详细内容请参考**官方文档**[6]。
+
+使用 Istio CNI 插件来创建 sidecar iptables 规则肯定是未来的主流方式，不如我们现在就尝试使用这种方法。
+
+### Kubernetes 关键插件（Critical Add-On Pods）
+
+众所周知，Kubernetes 的核心组件都运行在 master 节点上，然而还有一些附加组件对整个集群来说也很关键，例如 DNS 和 metrics-server，这些被称为**关键插件**。一旦关键插件无法正常工作，整个集群就有可能会无法正常工作，所以 Kubernetes 通过优先级（PriorityClass）来保证关键插件的正常调度和运行。要想让某个应用变成 Kubernetes 的**关键插件**，只需要其 `priorityClassName` 设为 `system-cluster-critical` 或 `system-node-critical`，其中 `system-node-critical` 优先级最高。
+
+> 注意：关键插件只能运行在 `kube-system` namespace 中！
 
 ### 初始化并安装 Operator 
 
@@ -177,11 +187,11 @@ spec:
 istiooperator.install.istio.io/example-istiocontrolplane created
 ```
 
-`istio-operator` 负责动态 `创建、修改` istio 组件。可以采用 查看创建日志过程
-
-```bash
-kubectl logs -f -n istio-operator $(kubectl get pods -n istio-operator -lname=istio-operator -o jsonpath='{.items[0].metadata.name}')
-```
+> `istio-operator` 负责动态 `创建、修改` istio 组件。可以采用 查看创建日志过程
+>
+> ```bash
+> kubectl logs -f -n istio-operator $(kubectl get pods -n istio-operator -lname=istio-operator -o jsonpath='{.items[0].metadata.name}')
+> ```
 
 分屏查看执行效果:
 
@@ -230,11 +240,16 @@ spec:
   components:
     base:
       enabled: true
+    cni:
+      enabled: true
+      namespace: kube-system
     # Istio Gateway feature
     ingressGateways:
       - name: istio-ingressgateway
         enabled: true
-        k8s: # k8s 资源配置，按照 k8s deployment 模板即可
+        k8s:
+          service:
+            type: ClusterIP #change to NodePort, ClusterIP or LoadBalancer if need be
           replicaCount: 2
           tolerations:
             - key: node-role.kubernetes.io/master
@@ -249,9 +264,9 @@ spec:
           strategy:
             type: RollingUpdate
             rollingUpdate:
-              maxSurge: "100%"
-              maxUnavailable: "25%"
-          # 反亲和 配置 使用 host 网络 
+              maxSurge: 0%
+              maxUnavailable: 100%
+          # 反亲和 配置
           affinity:
             podAntiAffinity:
               requiredDuringSchedulingIgnoredDuringExecution:
@@ -261,7 +276,7 @@ spec:
                         operator: In
                         values:
                           - istio-ingressgateway
-                  topologyKey: kubernetes.io/hostnam
+                  topologyKey: kubernetes.io/hostname
             hostNetwork: true
             dnsPolicy: ClusterFirstWithHostNet
     egressGateways:
@@ -281,15 +296,20 @@ spec:
               maxSurge: 1
               maxUnavailable: 0
   values:
-    # 查看 istio/istio-1.5.0/install/kubernetes/operator/charts/gateways 的values 配置
+  # 部署 istio-cni 插件
+    cni:
+      # 排除部分命名空间。
+      excludeNamespaces:
+        - istio-system
+        - kube-system
+        - monitoring
+      logLevel: info
     gateways:
       istio-egressgateway:
         autoscaleEnabled: false
       istio-ingressgateway:
         autoscaleEnabled: false
         debug: info
-        # svc 改成 ClusterIP
-        type: ClusterIP #change to NodePort, ClusterIP or LoadBalancer if need be
   # 组件
   addonComponents:
     kiali:
@@ -300,7 +320,12 @@ spec:
       enabled: true
 ```
 
-修改成功模板后:
+- istio-ingressgateway 的 Service 默认类型为 `LoadBalancer`，需将其改为 `ClusterIP`。
+- 为防止集群资源紧张，更新配置后无法创建新的 `Pod`，需将滚动更新策略改为先删除旧的，再创建新的。
+- 将 istio-ingressgateway 调度到指定节点。
+- 默认情况下除了 `istio-system` `namespace` 之外，istio cni 插件会监视其他所有 namespace 中的 Pod，然而这并不能满足我们的需求，更严谨的做法是让 istio CNI 插件至少忽略 `kube-system`、`istio-system` 这两个 namespace，如果你还有其他的特殊的 namespace，也应该加上，例如 `monitoring`。
+
+部署完成后，查看各组件状态：
 
 ```bash
 ➜  istio-1.5.0 git:(master) ✗ kubectl apply -f default.yaml
@@ -356,7 +381,74 @@ NAME                                         REFERENCE           TARGETS        
 horizontalpodautoscaler.autoscaling/istiod   Deployment/istiod   <unknown>/80%   1         5         1          5h52m
 ```
 
+`Istio-cni` 部署的时候，会产生短暂的`网络中断` ，检查节点配置是否正常：
+
+```bash
+[root@hz-k8s-master1 ~]# cat /etc/cni/net.d/10-calico.conflist
+{
+  "name": "k8s-pod-network",
+  "cniVersion": "0.3.1",
+  "plugins": [
+    {
+      "type": "calico",
+      "log_level": "info",
+      "datastore_type": "kubernetes",
+      "nodename": "hz-k8s-master1",
+      "mtu": 1440,
+      "ipam": {
+        "type": "calico-ipam"
+      },
+      "policy": {
+        "type": "k8s"
+      },
+      "kubernetes": {
+        "kubeconfig": "/etc/cni/net.d/calico-kubeconfig"
+      }
+    },
+    {
+      "type": "portmap",
+      "snat": true,
+      "capabilities": {
+        "portMappings": true
+      }
+    },
+    # 此处
+    {
+      "cniVersion": "0.3.1",
+      "name": "istio-cni",
+      "type": "istio-cni",
+      "log_level": "info",
+      "kubernetes": {
+        "kubeconfig": "/etc/cni/net.d/ZZZ-istio-cni-kubeconfig",
+        "cni_bin_dir": "/opt/cni/bin",
+        "exclude_namespaces": [
+          "istio-system",
+          "kube-system",
+          "monitoring"
+        ]
+      }
+    }
+  ]
+}
+```
+
+`Istio-CNI` 部署采用 `daemonSet` (守护进程)方式：
+
+```bash
+➜  istio-1.5.0 git:(master) ✗ kubectl -n kube-system get pod -l k8s-app=istio-cni-node -owide
+NAME                   READY   STATUS    RESTARTS   AGE     IP             NODE             NOMINATED NODE   READINESS GATES
+istio-cni-node-2q8xw   2/2     Running   0          4m9s    192.168.8.57   hz-k8s-master1   <none>           <none>
+istio-cni-node-58qt2   2/2     Running   0          4m9s    192.168.8.62   hz-k8s-node3     <none>           <none>
+istio-cni-node-7k8jv   2/2     Running   0          4m10s   192.168.8.63   hz-k8s-ci        <none>           <none>
+istio-cni-node-gg4jz   2/2     Running   0          4m10s   192.168.8.59   hz-k8s-master3   <none>           <none>
+istio-cni-node-jc2vz   2/2     Running   0          4m10s   192.168.8.61   hz-k8s-node2     <none>           <none>
+istio-cni-node-ljjkf   2/2     Running   0          4m9s    192.168.8.58   hz-k8s-master2   <none>           <none>
+istio-cni-node-zqkwj   2/2     Running   0          4m2s    192.168.8.60   hz-k8s-node1     <none>           <none>
+```
+
 部署至此已完成。
+
+
 
 ### 清除 Istio服务 与 istio-opeartor
 
