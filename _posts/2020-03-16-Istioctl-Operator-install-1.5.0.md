@@ -11,10 +11,6 @@ tags:
     - istio
 ---
 
-
-
-# istioctl Opeartor 部署 istio-1.5.0
-
 ### 简介
 
 ### 服务网格
