@@ -79,12 +79,12 @@ netease_comment: false
 
 # Google Analytics
 ga_track_id: 'UA-140059859-1'            # Format: UA-xxxxxx-xx
-ga_domain: "soulmz.github.io"
+ga_domain: auto
 
 
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "后端、Docker、Kubernetes"
+sidebar-about-description: "Java、Docker、Kubernetes、Istio"
 sidebar-avatar: /img/无名/1004038-1.png  # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
