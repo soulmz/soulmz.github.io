@@ -257,6 +257,8 @@ spec:
             limits:
               cpu: 2000m
               memory: 2Gi
+          hostNetwork: true  # 此处好像无效
+          dnsPolicy: ClusterFirstWithHostNet # 此处好像无效 可以手动 编辑 edit deployment
           strategy:
             type: RollingUpdate
             rollingUpdate:
@@ -273,8 +275,6 @@ spec:
                         values:
                           - istio-ingressgateway
                   topologyKey: kubernetes.io/hostname
-            hostNetwork: true
-            dnsPolicy: ClusterFirstWithHostNet
     egressGateways:
       - name: istio-egressgateway
         enabled: true
@@ -314,6 +314,8 @@ spec:
       enabled: true
     tracing:
       enabled: true
+
+
 ```
 
 - istio-ingressgateway 的 Service 默认类型为 `LoadBalancer`，需将其改为 `ClusterIP`。
