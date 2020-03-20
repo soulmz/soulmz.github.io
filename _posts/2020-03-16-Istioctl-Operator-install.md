@@ -323,6 +323,8 @@ spec:
 - 将 istio-ingressgateway 调度到指定节点。
 - 默认情况下除了 `istio-system` `namespace` 之外，istio cni 插件会监视其他所有 namespace 中的 Pod，然而这并不能满足我们的需求，更严谨的做法是让 istio CNI 插件至少忽略 `kube-system`、`istio-system` 这两个 namespace，如果你还有其他的特殊的 namespace，也应该加上，例如 `monitoring`。
 
+> Istio-ingress的 hostNetwork: true 和 dnsPolicy: ClusterFirstWithHostNet 可能需要手动修改 deployment 配置
+
 部署完成后，查看各组件状态：
 
 ```bash
@@ -379,7 +381,7 @@ NAME                                         REFERENCE           TARGETS        
 horizontalpodautoscaler.autoscaling/istiod   Deployment/istiod   <unknown>/80%   1         5         1          5h52m
 ```
 
-`Istio-cni` 部署的时候，会产生短暂的`网络中断` ，检查节点配置是否正常：
+`Istio-cni` 部署的时候，可能会产生短暂的`网络中断` ，检查节点配置是否正常：
 
 ```bash
 [root@hz-k8s-master1 ~]# cat /etc/cni/net.d/10-calico.conflist
@@ -443,6 +445,8 @@ istio-cni-node-jc2vz   2/2     Running   0          4m10s   192.168.8.61   hz-k8
 istio-cni-node-ljjkf   2/2     Running   0          4m9s    192.168.8.58   hz-k8s-master2   <none>           <none>
 istio-cni-node-zqkwj   2/2     Running   0          4m2s    192.168.8.60   hz-k8s-node1     <none>           <none>
 ```
+
+> 注意: 部署完`Istio-cni`，`istio-system` 要记得重启Pod 服务。
 
 部署至此已完成。
 
