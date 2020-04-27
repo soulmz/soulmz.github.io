@@ -111,7 +111,7 @@ source ~/.zshrc
 
 ### Istio CNI Plugin
 
-当前实现将用户 pod 流量转发到 proxy 的默认方式是使用 privileged 权限的 `istio-init` 这个 init container 来做的（运行脚本写入 iptables），需要用到 `NET_ADMIN` capabilities。对 linux capabilities 不了解的同学可以参考我的 [Linux capabilities 系列](http://mp.weixin.qq.com/s?__biz=MzU1MzY4NzQ1OA==&mid=2247484610&idx=1&sn=0f75f48b1651f03163bef421280c25f8&chksm=fbee440fcc99cd19c786acd3de00fee7914664171395013bb3fb4e1dfb1a84f618fc1a9b042e&scene=21#wechat_redirect)。
+当前实现将用户 pod 流量转发到 proxy 的默认方式是使用 privileged 权限的 `istio-init` 这个 init container 来做的（运行脚本写入 iptables），需要用到 `NET_ADMIN` capabilities。对 linux capabilities 不了解的同学可以参考 [Linux capabilities 系列](http://mp.weixin.qq.com/s?__biz=MzU1MzY4NzQ1OA==&mid=2247484610&idx=1&sn=0f75f48b1651f03163bef421280c25f8&chksm=fbee440fcc99cd19c786acd3de00fee7914664171395013bb3fb4e1dfb1a84f618fc1a9b042e&scene=21#wechat_redirect)。
 
 Istio CNI 插件的主要设计目标是消除这个 privileged 权限的 init container，换成利用 Kubernetes CNI 机制来实现相同功能的替代方案。具体的原理就是在 Kubernetes CNI 插件链末尾加上 Istio 的处理逻辑，在创建和销毁 pod 的这些 hook 点来针对 istio 的 pod 做网络配置：写入 iptables，让该 pod 所在的 network namespace 的网络流量转发到 proxy 进程。
 
@@ -257,13 +257,21 @@ spec:
             limits:
               cpu: 2000m
               memory: 2Gi
-          hostNetwork: true  # 此处好像无效
-          dnsPolicy: ClusterFirstWithHostNet # 此处好像无效 可以手动 编辑 edit deployment
           strategy:
             type: RollingUpdate
             rollingUpdate:
               maxSurge: 0%
               maxUnavailable: 100%
+          # 使用 overlays 覆盖或更新配置
+          overlays:
+            - apiVersion: apps/v1
+              kind: Deployment
+              name: istio-ingressgateway
+              patches:
+                - path: spec.template.spec
+                  value:
+                    hostNetwork: true
+                    dnsPolicy: ClusterFirstWithHostNet
           # 反亲和 配置
           affinity:
             podAntiAffinity:
@@ -323,7 +331,7 @@ spec:
 - 将 istio-ingressgateway 调度到指定节点。
 - 默认情况下除了 `istio-system` `namespace` 之外，istio cni 插件会监视其他所有 namespace 中的 Pod，然而这并不能满足我们的需求，更严谨的做法是让 istio CNI 插件至少忽略 `kube-system`、`istio-system` 这两个 namespace，如果你还有其他的特殊的 namespace，也应该加上，例如 `monitoring`。
 
-> Istio-ingress的 hostNetwork: true 和 dnsPolicy: ClusterFirstWithHostNet 可能需要手动修改 deployment 配置
+> Istio-ingress的 hostNetwork: true 和 dnsPolicy: ClusterFirstWithHostNet ，使用`overlas`进行配置。**注意：如果使用 overlays ，请使用 kubectl apply 进行配置。如果使用 istioctl manifest apply 方式部署会更新失败。**
 
 部署完成后，查看各组件状态：
 
