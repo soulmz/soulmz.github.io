@@ -2,13 +2,13 @@
 layout:     post   				    
 title:      Homebrew配置 Mirror 阿里云
 subtitle:   Homebrew Mirror aliyun
-date:       2020-03-17		
+date:       2020-03-20		
 author:     soulmz				
 header-img: img/backgroup/77642582_p0.jpg	
 catalog: true 						
 tags:								
-    - MacOs 
-    - Homebrew
+   - MacOs 
+   - Homebrew
 ---
 
 

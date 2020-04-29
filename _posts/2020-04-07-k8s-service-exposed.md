@@ -2,7 +2,7 @@
 layout:     post   				    
 title:      集群外的服务提供 k8s集群内使用
 subtitle:   k8s exposed External Services
-date:       2020-03-17		
+date:       2020-04-07		
 author:     soulmz				
 header-img: img/backgroup/77642582_p0.jpg	
 catalog: true 						
