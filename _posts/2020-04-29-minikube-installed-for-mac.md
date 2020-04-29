@@ -1,7 +1,7 @@
 ---
 layout:     post   				    
 title:      MacOS 安装 Minikube
-subtitle:   Minikube Install MacOS
+subtitle:   Minikube Install On MacOS
 date:       2020-04-29		
 author:     soulmz				
 header-img: img/backgroup/77642582_p0.jpg	
