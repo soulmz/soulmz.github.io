@@ -92,9 +92,45 @@ $ minikube start --memory='6000mb' --cpus=4 --registry-mirror=https://{改成自
 
 ![image-20200429144428388](/img/in-post/image-20200429144428388.png)
 
-至此，已完成本地 K8S 的实验环境。
 
-关于minikube 的相关操作手册，可以阅读[Minikube官方文档](https://minikube.sigs.k8s.io/docs/start/) 
+
+**校验kubectl:**
+
+```bash
+➜  ~ kubectl version
+Client Version: version.Info{Major:"1", Minor:"17", GitVersion:"v1.17.3", GitCommit:"06ad960bfd03b39c8310aaf92d1e7c12ce618213", GitTreeState:"clean", BuildDate:"2020-02-13T18:06:54Z", GoVersion:"go1.13.8", Compiler:"gc", Platform:"darwin/amd64"}
+Server Version: version.Info{Major:"1", Minor:"17", GitVersion:"v1.17.3", GitCommit:"06ad960bfd03b39c8310aaf92d1e7c12ce618213", GitTreeState:"clean", BuildDate:"2020-02-11T18:07:13Z", GoVersion:"go1.13.6", Compiler:"gc", Platform:"linux/amd64"}
+➜  ~ kubectl cluster-info
+Kubernetes master is running at https://192.168.64.13:8443
+KubeDNS is running at https://192.168.64.13:8443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+➜  ~ kubectl get no
+NAME       STATUS   ROLES    AGE   VERSION
+minikube   Ready    master   44h   v1.17.3
+```
+
+**Kubernetes Dashboard**
+
+```bash
+➜  ~ minikube dashboard
+🤔  Verifying dashboard health ...
+🚀  Launching proxy ...
+🤔  Verifying proxy health ...
+🎉  Opening http://127.0.0.1:65372/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/ in your default browser...
+```
+
+**dashboard 界面**
+
+![image-20200429150711621](/img/in-post/image-20200429150711621.png)
+
+
+
+更多的 Minikube 的相关教程，可以阅读[Minikube官方文档](https://minikube.sigs.k8s.io/docs/start/) 
+
+
+
+至此，已完成本地 K8S 的实验环境。
 
 ##  参考资料
 
