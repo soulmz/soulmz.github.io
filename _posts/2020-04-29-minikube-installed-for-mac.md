@@ -1,6 +1,6 @@
 ---
 layout:     post   				    
-title:      MacOs 安装 minikube
+title:      MacOS 安装 Minikube
 subtitle:   Minikube Install MacOS
 date:       2020-04-29		
 author:     soulmz				
@@ -8,7 +8,7 @@ header-img: img/backgroup/77642582_p0.jpg
 catalog: true 						
 tags:								
   - Kubernetes 
-  - minikube
+  - Minikube
 ---
 
 
