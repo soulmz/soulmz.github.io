@@ -29,7 +29,9 @@ Minikube 是 `kubernetes` 社区为了方便大家，快速上手学习 k8s 服�
 
 ![image-20200429141829808](/img/in-post/image-20200429141829808.png)
 
-用户通过 kubectl 来对 kubernetes 进行管理
+
+
+Kubectl 来管理 Kubernetes 服务
 
 Minikube 运行在  Hyperkit (VM) 虚拟机
 
